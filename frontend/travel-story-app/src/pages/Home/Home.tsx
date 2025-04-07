@@ -357,7 +357,7 @@ const Home: React.FC = () => {
       <button
         className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10"
         onClick={() => {
-          setOpenAddEditModal({ isShown: true, type: 'add', data: null })
+          handleAddStoryClick()
         }}
       >
         <MdAdd className="text-[32px] text-white" />

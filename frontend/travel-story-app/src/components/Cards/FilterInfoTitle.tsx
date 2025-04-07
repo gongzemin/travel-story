@@ -2,8 +2,23 @@ import React from 'react'
 import moment from 'moment'
 import { MdOutlineClose } from 'react-icons/md'
 
-const filterInfoTitle = ({ filterType, filterDates, onClear }) => {
-  const DateRangeChip = ({ date }) => {
+interface DateRange {
+  from?: string | Date
+  to?: string | Date
+}
+
+interface FilterInfoTitleProps {
+  filterType: 'search' | 'date' | string
+  filterDates: DateRange
+  onClear: () => void
+}
+
+const FilterInfoTitle: React.FC<FilterInfoTitleProps> = ({
+  filterType,
+  filterDates,
+  onClear,
+}) => {
+  const DateRangeChip: React.FC<{ date: DateRange }> = ({ date }) => {
     const startDate = date?.from
       ? moment(date?.from).format('YYYY-MM-DD')
       : 'N/A'
@@ -20,19 +35,21 @@ const filterInfoTitle = ({ filterType, filterDates, onClear }) => {
       </div>
     )
   }
+
+  if (!filterType) return null
+
   return (
-    filterType && (
-      <div className="mb-5">
-        {filterType === 'search' ? (
-          <h3 className="text-lg font-medium">查询结果</h3>
-        ) : (
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-medium">查询日期范围</h3>
-            <DateRangeChip date={filterDates} />
-          </div>
-        )}
-      </div>
-    )
+    <div className="mb-5">
+      {filterType === 'search' ? (
+        <h3 className="text-lg font-medium">查询结果</h3>
+      ) : (
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-medium">查询日期范围</h3>
+          <DateRangeChip date={filterDates} />
+        </div>
+      )}
+    </div>
   )
 }
-export default filterInfoTitle
+
+export default FilterInfoTitle
