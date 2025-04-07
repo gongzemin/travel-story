@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="transparent"/>
+    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="62" fill="#333" text-anchor="middle" alignment-baseline="middle">
+        读书<tspan fill="red">
+            <animate attributeName="fill" values="red;blue;green;red" dur="5s" repeatCount="indefinite"/>er
+        </tspan>
+    </text>
+</svg>
