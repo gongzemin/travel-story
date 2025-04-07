@@ -1,6 +1,6 @@
 [build]
   base = "frontend/travel-story-app"
-  publish = "frontend/travel-story-app/dist"
+  publish = "dist"
   command = "pnpm install && pnpm run build"
 
 [dev]
