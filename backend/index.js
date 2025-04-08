@@ -404,5 +404,8 @@ app.get('/travel-stories/filter', authenticateToken, async (req, res) => {
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
 
-app.listen(8000)
+const port = process.env.PORT || 8000
+app.listen(port)
 module.exports = app
+
+console.log(`Server is running on port ${port}`)
