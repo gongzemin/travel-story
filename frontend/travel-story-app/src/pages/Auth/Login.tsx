@@ -36,43 +36,36 @@ const Login = () => {
         navigate('/dashboard')
       }
     } catch (error) {
-      // Handle login error
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message)
-      } else {
-        setError('An expected error occured. Please try again.')
-      }
+      setError(error?.response?.data?.message || '未知错误.')
     }
   }
 
   return (
-    <div className="h-screen bg-cyan-50 overflow-hidden relative">
+    <div className="min-h-screen bg-cyan-50 overflow-hidden relative">
       <div className="login-ui-box right-10 -top-40" />
       <div className="login-ui-box bg-cyan-200 -bottom-40 right-1/2" />
-
-      <div className="container h-screen flex items-center justify-center px-20 mx-auto">
-        <div className="w-2/4 h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-lg p-10 z-50">
+      {/* md:rounded-r-none md:rounded-l-none */}
+      <div className="container flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mx-auto gap-6 py-10 ">
+        <div className="w-full md:w-2/4 h-64 md:h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-lg  p-6 md:p-10  mb-8 md:mb-0 z-50">
           <div>
-            <h4 className="text-5xl text-white font-semibold leading-[58px]">
+            <h4 className="text-3xl md:text-5xl text-white font-semibold leading-snug md:leading-[58px]">
               记江湖十载
             </h4>
-            <p className="text-[15px] text-white leading-6 pr-7 mt-4">
+            <p className="text-sm md:text-[15px] text-white leading-6 mt-2 md:mt-4 pr-2 md:pr-7">
               结庐在人境，而无车马喧。
             </p>
           </div>
         </div>
 
-        <div className="w-2/4 h-[75vh] bg-white rounded-r-lg relative p-16 shadow-lg shadow-cyan-200/20">
+        <div className="w-full md:w-2/4 bg-white rounded-lg  relative p-6 md:p-10 shadow-lg shadow-cyan-200/20 z-50">
           <form onSubmit={handleLogin}>
-            <h4 className="text-2xl font-semibold mb-7">Login</h4>
+            <h4 className="text-xl md:text-2xl font-semibold mb-6">
+              遇见你真好 :)
+            </h4>
             <input
               type="text"
               placeholder="Email"
-              className="input-box"
+              className="input-box "
               value={email}
               onChange={({ target }) => {
                 setEmail(target.value)
@@ -90,7 +83,7 @@ const Login = () => {
               登录
             </button>
 
-            <p className="text-xs text-slate-500 text-center mt-4">Or</p>
+            <p className="text-xs text-slate-500 text-center mt-4">或</p>
             <button
               type="submit"
               className="btn-primary btn-light"

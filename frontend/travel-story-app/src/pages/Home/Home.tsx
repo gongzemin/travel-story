@@ -241,7 +241,7 @@ const Home: React.FC = () => {
         onSearchNote={onSearchStory}
         handleClearSearch={handleClearSearch}
       />
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-7 px-4 md:px-0.5">
         <FilterInfoTitle
           filterType={filterType}
           filterDates={dateRange}
@@ -250,11 +250,11 @@ const Home: React.FC = () => {
           }}
         />
 
-        <div className="flex gap-7">
+        <div className="flex flex-col-reverse md:flex-row gap-7 ">
           <div className="flex-1 relative">
             {/* Main Content */}
             {allStories.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {allStories.map(item => (
                   <TravelStoryCard
                     key={item._id}
@@ -355,7 +355,7 @@ const Home: React.FC = () => {
       </Modal>
 
       <button
-        className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10"
+        className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-6 bottom-6 md:right-10 md:bottom-10 z-50"
         onClick={() => {
           handleAddStoryClick()
         }}

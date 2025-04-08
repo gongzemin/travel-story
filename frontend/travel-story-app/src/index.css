@@ -23,10 +23,10 @@
 }
 @layer utilities {
   .bg-login-bg-img {
-    background-image: url('./src/assets/login.jpg'); /* Replace with actual path */
+    background-image: url('/assets/login.jpg'); /* Replace with actual path */
   }
   .bg-sign-bg-img {
-    background-image: url('./src/assets/login2.jpg'); /* Replace with actual path */
+    background-image: url('/assets/signup.jpg'); /* Replace with actual path */
   }
   /* Custom scrollbar styles */
   .scrollbar::-webkit-scrollbar {
