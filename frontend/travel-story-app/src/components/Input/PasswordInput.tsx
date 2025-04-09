@@ -23,7 +23,7 @@ const PasswordInput: FC<PasswordInputProps> = ({
       <input
         value={value}
         onChange={onChange}
-        placeholder={placeholder || 'Password'}
+        placeholder={placeholder || '密码'}
         type={isShowPassword ? 'text' : 'password'}
         className="w-full text-sm bg-transparent py-3 mr-3 rounded outline-none"
       />

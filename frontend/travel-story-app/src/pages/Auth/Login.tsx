@@ -64,7 +64,7 @@ const Login = () => {
             </h4>
             <input
               type="text"
-              placeholder="Email"
+              placeholder="邮箱"
               className="input-box "
               value={email}
               onChange={({ target }) => {
