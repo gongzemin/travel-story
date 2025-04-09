@@ -1,4 +1,5 @@
 require('dotenv').config()
+const cloudinary = require('cloudinary').v2
 const config = require('./config.json')
 const mongoose = require('mongoose')
 
@@ -21,6 +22,12 @@ mongoose.connect(config.connectionString)
 const app = express()
 app.use(express.json())
 app.use(cors({ origin: '*' }))
+
+cloudinary.config({
+  cloud_name: 'dy8ad5o14',
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+})
 
 // Test api
 app.post('/create-account', async (req, res) => {
@@ -175,16 +182,38 @@ app.get('/get-all-stories', authenticateToken, async (req, res) => {
   }
 })
 
-// Route to handle image upload
+
+
 app.post('/image-upload', upload.single('image'), async (req, res) => {
   try {
-    console.log(req.file)
+    console.log(req.file, 'file')
     if (!req.file) {
       return res.status(400).json({ error: true, message: '未上传图片' })
     }
-    const imageUrl = `http://localhost:8000/uploads/${req.file.filename}`
-    res.status(200).json({ imageUrl })
+
+    // Upload the image to Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'dushu',
+    })
+
+    console.log(uploadResult, 'uploadResult')
+
+    // Optimize delivery by resizing and applying auto-format and auto-quality
+    // const imageUrl = cloudinary.url(uploadResult.public_id, {
+    // fetch_format: 'auto',
+    // quality: 'auto',
+    // })
+    // console.log(imageUrl, 'imageUrl')
+
+    // Delete the temporary file from local storage
+    fs.unlinkSync(req.file.path)
+
+    res.status(200).json({
+      imageUrl: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+    })
   } catch (error) {
+    console.error('Upload error:', error)
     res.status(500).json({ error: true, message: error.message })
   }
 })
