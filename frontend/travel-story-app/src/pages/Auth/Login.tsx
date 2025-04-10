@@ -79,14 +79,17 @@ const Login = () => {
             />
 
             {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
-            <button type="submit" className="btn-primary">
+            <button
+              type="submit"
+              className="w-full text-sm font-medium text-white bg-cyan-500 shadow-cyan-200/50 p-[10px] rounded-full my-1 hover:bg-cyan-100 hover:text-cyan-500"
+            >
               登录
             </button>
 
             <p className="text-xs text-slate-500 text-center mt-4">或</p>
             <button
               type="submit"
-              className="btn-primary btn-light"
+              className="w-full text-sm font-medium text-white bg-cyan-500 shadow-cyan-200/50 p-[10px] rounded-full my-1 hover:bg-cyan-100 hover:text-cyan-500 btn-light"
               onClick={() => {
                 navigate('/signUp')
               }}
