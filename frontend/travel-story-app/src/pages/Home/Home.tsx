@@ -249,6 +249,14 @@ const Home: React.FC = () => {
             resetFilter()
           }}
         />
+        <button
+          className="mt-20"
+          onClick={() => {
+            throw new Error('This is your first error!')
+          }}
+        >
+          Break the world
+        </button>
 
         <div className="flex flex-col-reverse md:flex-row gap-7 ">
           <div className="flex-1 relative">
