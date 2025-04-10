@@ -3,6 +3,7 @@ import PasswordInput from '../../components/Input/PasswordInput.tsx'
 import { useNavigate } from 'react-router-dom'
 import { validateEmail } from '../../utils/helper'
 import axiosInstance from '../../utils/axiosInstance'
+import * as Sentry from '@sentry/react'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -13,12 +14,12 @@ const Login = () => {
   const handleLogin = async e => {
     e.preventDefault()
     if (!validateEmail(email)) {
-      setError('Please enter a valid email address')
+      setError('请输入有效的邮箱地址')
       return
     }
 
     if (!password) {
-      setError('Please enter a password')
+      setError('请输入密码')
       return
     }
     setError('')
@@ -29,6 +30,7 @@ const Login = () => {
         email,
         password,
       })
+      console.log('res---', res)
 
       // Handle successful login response
       if (res.data && res.data.accessToken) {
@@ -36,6 +38,8 @@ const Login = () => {
         navigate('/dashboard')
       }
     } catch (error) {
+      Sentry.captureException(error)
+      console.error('Login error:', error)
       setError(error?.response?.data?.message || '未知错误.')
     }
   }
