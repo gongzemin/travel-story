@@ -4,12 +4,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js && pnpm sentry:sourcemaps",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nextmin --project dushu-backend ./ && sentry-cli sourcemaps upload --org nextmin --project dushu-backend ./"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@sentry/cli": "^2.43.0",
+    "@sentry/node": "^9.12.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
     "cors": "^2.8.5",

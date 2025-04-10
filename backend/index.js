@@ -1,9 +1,11 @@
+require('./instrument.js')
 require('dotenv').config()
 const cloudinary = require('cloudinary').v2
 const config = require('./config.json')
 const mongoose = require('mongoose')
 
 const bcrypt = require('bcrypt')
+const Sentry = require('@sentry/node')
 const express = require('express')
 const cors = require('cors')
 
@@ -182,8 +184,6 @@ app.get('/get-all-stories', authenticateToken, async (req, res) => {
   }
 })
 
-
-
 app.post('/image-upload', upload.single('image'), async (req, res) => {
   try {
     console.log(req.file, 'file')
@@ -221,27 +221,34 @@ app.post('/image-upload', upload.single('image'), async (req, res) => {
 // Delete an image
 app.delete('/delete-image', async (req, res) => {
   const { imageUrl } = req.query
+
   if (!imageUrl) {
     return res.status(400).json({
       error: true,
       message: 'imageUrl parameter is required',
     })
   }
+
   try {
-    // Extract the filename from the imageUrl
-    const filename = path.basename(imageUrl)
-    console.log('filename', filename)
-    // Define the file path
-    const filePath = path.join(__dirname, 'uploads', filename)
-    console.log('filePath', filePath)
-    // Check if the file exists
-    if (fs.existsSync(filePath)) {
-      // Delete the file from the uploads folder
-      fs.unlinkSync(filePath)
-      res.status(200).json({ message: '图片删除成功', success: true })
-    } else {
-      res.status(200).json({ error: true, message: 'Image not found' })
+    // ========== 1. Delete from Cloudinary ==========
+    const cloudinaryRegex = /\/v\d+\/(.+)\.(jpg|jpeg|png|webp|gif)$/i
+    const match = imageUrl.match(cloudinaryRegex)
+    if (match) {
+      const publicId = match[1] // extract publicId
+      console.log('Deleting from Cloudinary:', publicId)
+      await cloudinary.uploader.destroy(publicId)
     }
+
+    // ========== 2. Delete from local uploads folder ==========
+    const filename = path.basename(imageUrl)
+    const filePath = path.join(__dirname, 'uploads', filename)
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+      console.log('Deleted from local filesystem:', filePath)
+    }
+
+    res.status(200).json({ message: '图片删除成功', success: true })
   } catch (error) {
     res.status(500).json({ error: true, message: error.message })
   }
@@ -428,6 +435,9 @@ app.get('/travel-stories/filter', authenticateToken, async (req, res) => {
     res.status(500).json({ error: true, message: error.message })
   }
 })
+
+// The error handler must be registered before any other error middleware and after all controllers
+Sentry.setupExpressErrorHandler(app)
 
 // Serve static files from the uploads and assets directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
