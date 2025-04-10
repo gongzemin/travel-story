@@ -249,9 +249,6 @@ const Home: React.FC = () => {
             resetFilter()
           }}
         />
-        <button type="submit" className="btn-primary">
-          登录
-        </button>
 
         <div className="flex flex-col-reverse md:flex-row gap-7 ">
           <div className="flex-1 relative">

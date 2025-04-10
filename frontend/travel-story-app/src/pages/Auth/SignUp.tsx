@@ -96,14 +96,14 @@ const Signup = () => {
             />
 
             {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="travel-btn-primary">
               创建账号
             </button>
 
             <p className="text-xs text-slate-500 text-center mt-4">或</p>
             <button
               type="submit"
-              className="btn-primary btn-light"
+              className="travel-btn-primary travel-btn-light"
               onClick={() => {
                 navigate('/signUp')
               }}
