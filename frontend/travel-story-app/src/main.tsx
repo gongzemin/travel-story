@@ -5,6 +5,10 @@ import 'react-day-picker/style.css'
 import './index.css'
 import * as Sentry from '@sentry/react'
 
+import VConsole from 'vconsole'
+
+new VConsole()
+
 Sentry.init({
   dsn: 'https://9c6eccdb37a5555089711d72aa4556fc@o4507231223939072.ingest.de.sentry.io/4509126357483600',
   integrations: [Sentry.replayIntegration()],
