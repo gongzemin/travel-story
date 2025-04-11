@@ -3,12 +3,14 @@ import PasswordInput from '../../components/Input/PasswordInput.tsx'
 import { useNavigate } from 'react-router-dom'
 import { validateEmail } from '../../utils/helper'
 import axiosInstance from '../../utils/axiosInstance'
+import LoadingSpinner from '../../components/LoadingSpinner'
 
 const Signup = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
   const handleSignUp = async e => {
@@ -45,6 +47,8 @@ const Signup = () => {
       }
     } catch (error) {
       setError(error?.response?.data?.message || '未知错误.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -113,6 +117,12 @@ const Signup = () => {
           </form>
         </div>
       </div>
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[9999] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   )
 }

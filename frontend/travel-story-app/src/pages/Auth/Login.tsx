@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { validateEmail } from '../../utils/helper'
 import axiosInstance from '../../utils/axiosInstance'
 import * as Sentry from '@sentry/react'
+import LoadingSpinner from '../../components/LoadingSpinner'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
   const handleLogin = async e => {
@@ -23,6 +25,7 @@ const Login = () => {
       return
     }
     setError('')
+    setLoading(true)
 
     // Login API Call
     try {
@@ -41,6 +44,8 @@ const Login = () => {
       Sentry.captureException(error)
       console.error('Login error:', error)
       setError(error?.response?.data?.message || '未知错误.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -100,6 +105,12 @@ const Login = () => {
           </form>
         </div>
       </div>
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[9999] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   )
 }
