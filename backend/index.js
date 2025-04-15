@@ -46,7 +46,7 @@ app.post('/create-account', async (req, res) => {
   if (isUser) {
     return res.status(400).json({
       error: true,
-      message: 'User already exists',
+      message: '用户已经存在',
     })
   }
 
@@ -71,7 +71,7 @@ app.post('/create-account', async (req, res) => {
     error: false,
     user: { fullName: user.fullName, email: user.email },
     accessToken,
-    message: 'Registration successful',
+    message: '注册成功',
   })
 })
 
@@ -259,7 +259,7 @@ app.put('/edit-story/:id', authenticateToken, async (req, res) => {
   const { title, story, visitedLocation, imageUrl, visitedDate } = req.body
   const { userId } = req.user
 
-  // Validate required fields
+  // 验证必填字段
   if (!title || !story || !visitedLocation || !visitedDate) {
     return res.status(400).json({
       error: true,
@@ -267,46 +267,107 @@ app.put('/edit-story/:id', authenticateToken, async (req, res) => {
     })
   }
 
-  // Convert visitedDate from milliseconds to Date object
   try {
-    // Find the travel story by ID and ensure it belongs to the authenticated user
-    const travelStory = await TravelStory.findOne({ _id: id, userId: userId })
-    if (!travelStory) {
-      return res
-        .status(404)
-        .json({ error: true, message: 'Travel story not found' })
-    }
-
-    // Parse visitedDate safely
+    // 解析 visitedDate
     const timestamp = Number(visitedDate)
     if (isNaN(timestamp)) {
       return res.status(400).json({
         error: true,
-        message: 'Invalid visitedDate format',
+        message: '日期格式无效',
       })
     }
 
+    const parsedVisitedDate = new Date(timestamp)
     const placeholderImgUrl = `http://localhost:8000/assets/placeholder.jpg`
-    const parsedVisitedDate = new Date(parseInt(visitedDate))
 
-    travelStory.title = title
-    travelStory.story = story
-    travelStory.visitedLocation = visitedLocation
-    travelStory.imageUrl = imageUrl || placeholderImgUrl
-    travelStory.visitedDate = parsedVisitedDate
+    // 使用 findByIdAndUpdate 更新文档
+    const updatedStory = await TravelStory.findByIdAndUpdate(
+      id,
+      {
+        title,
+        story,
+        visitedLocation,
+        imageUrl: imageUrl || placeholderImgUrl,
+        visitedDate: parsedVisitedDate,
+        userId, // 确保 userId 未被更改
+      },
+      {
+        new: true, // 返回更新后的文档
+        runValidators: true, // 运行 Schema 验证
+      }
+    )
 
-    // Save changes
-    await travelStory.save()
+    // 检查文档是否存在且属于当前用户
+    if (!updatedStory || updatedStory.userId.toString() !== userId) {
+      return res.status(404).json({
+        error: true,
+        message: '笔记不存在或无权访问',
+      })
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Travel story updated successfully',
-      travelStory,
+      message: '更新成功',
+      travelStory: updatedStory,
     })
   } catch (error) {
     res.status(500).json({ error: true, message: error.message })
   }
 })
+
+// app.put('/edit-story/:id', authenticateToken, async (req, res) => {
+//   const { id } = req.params
+//   const { title, story, visitedLocation, imageUrl, visitedDate } = req.body
+//   const { userId } = req.user
+
+//   // Validate required fields
+//   if (!title || !story || !visitedLocation || !visitedDate) {
+//     return res.status(400).json({
+//       error: true,
+//       message: '所有字段必填',
+//     })
+//   }
+
+//   // Convert visitedDate from milliseconds to Date object
+//   try {
+//     // Find the travel story by ID and ensure it belongs to the authenticated user
+//     const travelStory = await TravelStory.findOne({ _id: id, userId: userId })
+//     if (!travelStory) {
+//       return res
+//         .status(404)
+//         .json({ error: true, message: 'Travel story not found' })
+//     }
+
+//     // Parse visitedDate safely
+//     const timestamp = Number(visitedDate)
+//     if (isNaN(timestamp)) {
+//       return res.status(400).json({
+//         error: true,
+//         message: 'Invalid visitedDate format',
+//       })
+//     }
+
+//     const placeholderImgUrl = `http://localhost:8000/assets/placeholder.jpg`
+//     const parsedVisitedDate = new Date(parseInt(visitedDate))
+
+//     travelStory.title = title
+//     travelStory.story = story
+//     travelStory.visitedLocation = visitedLocation
+//     travelStory.imageUrl = imageUrl || placeholderImgUrl
+//     travelStory.visitedDate = parsedVisitedDate
+
+//     // Save changes
+//     await travelStory.save()
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Travel story updated successfully',
+//       travelStory,
+//     })
+//   } catch (error) {
+//     res.status(500).json({ error: true, message: error.message })
+//   }
+// })
 
 // Delete a travel story
 app.delete('/delete-story/:id', authenticateToken, async (req, res) => {

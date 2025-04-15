@@ -22,12 +22,12 @@ const Signup = () => {
     }
 
     if (!validateEmail(email)) {
-      setError('Please enter a valid email address')
+      setError('请输入一个有效的邮件地址')
       return
     }
 
     if (!password) {
-      setError('Please enter a password')
+      setError('请输入密码')
       return
     }
     setError('')
