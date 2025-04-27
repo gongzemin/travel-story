@@ -9,12 +9,17 @@ import { toast } from 'react-toastify'
 import uploadImage from '../../utils/uploadImage'
 import axios from 'axios'
 
+const SpinnerIcon = () => (
+  <div className="w-5 h-5 border-solid border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+)
+
 const AddEditTravelStory = ({
   storyInfo,
   type,
   onClose,
   getAllTravelStories,
 }) => {
+  // 定义标题、故事、图片、去过的地方、访问日期、错误信息、加载状态等状态
   const [title, setTitle] = useState(storyInfo?.title || '')
   const [storyImg, setStoryImg] = useState<File | null>(
     storyInfo?.imageUrl || null
@@ -25,9 +30,11 @@ const AddEditTravelStory = ({
   )
   const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Add New Travel Story
   const addNewTravelStory = async () => {
+    setLoading(true) // Start loading
     try {
       let imageUrl = ''
       // Upload image if present
@@ -36,7 +43,7 @@ const AddEditTravelStory = ({
         // Get image url
         imageUrl = imgUploadRes.imageUrl || ''
       }
-      const response = await axiosInstance.post('/add-travel-story', {
+      const response = await axiosInstance.post('/mine/add-travel-story', {
         title,
         story,
         imageUrl: imageUrl || '',
@@ -59,12 +66,15 @@ const AddEditTravelStory = ({
         // Handle non-Axios errors
         setError('发生错误，请稍后再试')
       }
+    } finally {
+      setLoading(false) // Stop loading no matter success or fail
     }
   }
 
   // Update Travel Story
   const updateTravelStory = async () => {
     const storyId = storyInfo?._id
+    setLoading(true) // Start loading
     try {
       let imageUrl = ''
       let postData = {
@@ -87,7 +97,7 @@ const AddEditTravelStory = ({
         }
       }
       const response = await axiosInstance.put(
-        `/edit-story/${storyId}`,
+        `/mine/edit-story/${storyId}`,
         postData
       )
       console.log('response---', response)
@@ -104,6 +114,8 @@ const AddEditTravelStory = ({
         // Handle non-Axios errors
         setError('发生错误，请稍后再试')
       }
+    } finally {
+      setLoading(false) // Stop loading no matter success or fail
     }
   }
 
@@ -134,7 +146,7 @@ const AddEditTravelStory = ({
   // Delete story image and Update the story
   const handleDeleteStoryImg = async () => {
     // 删除图片
-    const deleteImgRes = await axiosInstance.delete('/delete-image', {
+    const deleteImgRes = await axiosInstance.delete('/mine/delete-image', {
       params: {
         imageUrl: storyInfo?.imageUrl,
       },
@@ -151,7 +163,7 @@ const AddEditTravelStory = ({
           : moment().valueOf(),
       }
       const response = await axiosInstance.put(
-        `/edit-story/${storyInfo?._id}`,
+        `/mine/edit-story/${storyInfo?._id}`,
         postData
       )
       setStoryImg(null)
@@ -166,7 +178,29 @@ const AddEditTravelStory = ({
 
         <div>
           <div className="flex items-center gap-3 bg-cyan-50/50 p-2 rounded-l-lg">
-            {type === 'add' ? (
+            <button
+              className="btn-small"
+              onClick={handleAddOrUpdateClick}
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center gap-1">
+                  <SpinnerIcon />
+                  保存中...
+                </div>
+              ) : type === 'add' ? (
+                <>
+                  <MdAdd className="text-lg" />
+                  新增笔记
+                </>
+              ) : (
+                <>
+                  <MdUpdate className="text-lg" />
+                  更新笔记
+                </>
+              )}
+            </button>
+            {/* {type === 'add' ? (
               <button className="btn-small" onClick={handleAddOrUpdateClick}>
                 <MdAdd className="text-lg" />
                 新增笔记
@@ -177,12 +211,8 @@ const AddEditTravelStory = ({
                   <MdUpdate className="text-lg" />
                   更新笔记
                 </button>
-                {/* <button className="btn-small btn-delete" onClick={onClose}>
-                  <MdDeleteOutline className="text-lg" />
-                  删除笔记
-                </button> */}
               </>
-            )}
+            )} */}
 
             <button className="" onClick={onClose}>
               <MdClose className="text-xl text-slate-400" />

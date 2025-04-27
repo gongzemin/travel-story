@@ -11,6 +11,7 @@ const travelStorySchema = new Schema({
   imageUrl: { type: String, required: true },
   visitedDate: { type: Date, required: true },
   tags: { type: [String], default: [] },
+  favouriteCount: { type: Number, default: 0 }, // 新增 收藏数量
 })
 
 module.exports = mongoose.model('TravelStory', travelStorySchema)

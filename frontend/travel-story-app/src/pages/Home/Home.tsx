@@ -11,6 +11,7 @@ import AddEditTravelStory from './AddEditTravelStory'
 import ViewTravelStory from './ViewTravelStory'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import EmptyCard from '../../components/Cards/EmptyCard'
+import CategoryToggle from '../../components/CategoryToggle'
 import 'react-toastify/dist/ReactToastify.css'
 import EmptyImg from '../../assets/images/noData-removebg.png'
 import { DayPicker } from 'react-day-picker'
@@ -51,6 +52,18 @@ const Home: React.FC = () => {
   const [filterType, setFilterType] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dateRange, setDateRange] = useState({ from: null, to: null })
+  const [selectedCategory, setSelectedCategory] = useState('推荐')
+
+  const categories = [
+    '推荐',
+    '热门',
+    '最新',
+    '原创',
+    '情感',
+    '励志',
+    '科幻',
+    '哲理',
+  ]
 
   const [openAddEditModal, setOpenAddEditModal] = useState({
     isShown: false,
@@ -74,7 +87,7 @@ const Home: React.FC = () => {
   // Get User Info
   const getUserInfo = async () => {
     try {
-      const response = await axiosInstance.get('/get-user')
+      const response = await axiosInstance.get('/mine/get-user')
       if (response.data && response.data.user) {
         setUserInfo(response.data.user)
       }
@@ -109,7 +122,7 @@ const Home: React.FC = () => {
     const storyId = storyData._id
     try {
       const response = await axiosInstance.put(
-        `/update-is-favourite/${storyId}`,
+        `/mine/update-is-favourite/${storyId}`,
         {
           isFavourite: !storyData.isFavourite,
         }
@@ -132,7 +145,9 @@ const Home: React.FC = () => {
   const deleteTravelStory = async data => {
     const storyId = data._id
     try {
-      const response = await axiosInstance.delete(`/delete-story/${storyId}`)
+      const response = await axiosInstance.delete(
+        `/mine/delete-story/${storyId}`
+      )
       console.log('344', response)
       if (response.data && response.data.success) {
         toast.success('删除成功')
@@ -140,7 +155,7 @@ const Home: React.FC = () => {
         getAllTravelStories()
       }
     } catch (error) {
-      console.error('An error occurred while deleting story:', error)
+      console.error('删除数据时发生错误:', error)
     }
   }
 
@@ -148,12 +163,12 @@ const Home: React.FC = () => {
   const getAllTravelStories = async () => {
     setIsLoading(true)
     try {
-      const response = await axiosInstance.get('/get-all-stories')
+      const response = await axiosInstance.get('/mine/get-all-stories')
       if (response.data && response.data.stories) {
         setAllStories(response.data.stories)
       }
     } catch (error) {
-      console.error('An error occurred while fetching travel stories:', error)
+      console.error('获取数据时发生错误:', error)
     } finally {
       setIsLoading(false)
     }
@@ -163,7 +178,7 @@ const Home: React.FC = () => {
   const onSearchStory = async query => {
     setIsLoading(true)
     try {
-      const response = await axiosInstance.get('search', {
+      const response = await axiosInstance.get('/mine/search', {
         params: {
           searchQuery: query,
         },
@@ -190,19 +205,22 @@ const Home: React.FC = () => {
       const startDate = day.from ? moment(day.from).valueOf() : null
       const endDate = day.to ? moment(day.to).valueOf() : null
       if (startDate && endDate) {
-        const response = await axiosInstance.get('/travel-stories/filter', {
-          params: {
-            startDate,
-            endDate,
-          },
-        })
+        const response = await axiosInstance.get(
+          '/mine/travel-stories/filter',
+          {
+            params: {
+              startDate,
+              endDate,
+            },
+          }
+        )
         if (response.data && response.data.stories) {
           setFilterType('date')
           setAllStories(response.data.stories)
         }
       }
     } catch (error) {
-      console.error('An error occurred while filtering travel stories:', error)
+      console.error('筛选数据时出现异常:', error)
     } finally {
       setIsLoading(false)
     }
@@ -224,6 +242,10 @@ const Home: React.FC = () => {
     getAllTravelStories()
   }
 
+  const handleSelectCategory = (category: string) => {
+    setSelectedCategory(prev => (prev === category ? '' : category))
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       await getUserInfo()
@@ -241,7 +263,13 @@ const Home: React.FC = () => {
         onSearchNote={onSearchStory}
         handleClearSearch={handleClearSearch}
       />
+
       <div className="container mx-auto py-7 px-4 md:px-0.5">
+        <CategoryToggle
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={handleSelectCategory}
+        />
         <FilterInfoTitle
           filterType={filterType}
           filterDates={dateRange}
