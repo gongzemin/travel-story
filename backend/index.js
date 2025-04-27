@@ -204,12 +204,21 @@ app.post('/image-upload', upload.single('image'), async (req, res) => {
     // quality: 'auto',
     // })
     // console.log(imageUrl, 'imageUrl')
+    // Generate an optimized URL
+    const optimizedImageUrl = cloudinary.url(uploadResult.public_id, {
+      secure: true,
+      transformation: [
+        { fetch_format: 'auto' },
+        { quality: 'auto' },
+        // { width: 800, crop: 'limit' }, // optional
+      ],
+    })
 
     // Delete the temporary file from local storage
     fs.unlinkSync(req.file.path)
 
     res.status(200).json({
-      imageUrl: uploadResult.secure_url,
+      imageUrl: optimizedImageUrl,
       publicId: uploadResult.public_id,
     })
   } catch (error) {
