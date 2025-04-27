@@ -21,7 +21,7 @@ router.get('/get-tag-stories', async (req, res) => {
     } else {
       sortOption = { visitedDate: -1 } // 注意这里 "VisitedDate" 小写！（你原来写错大小写了！）
     }
-    const stories = await TravelStory.find(queryOption).sort(sortOption)
+    const stories = await TravelStory.find().sort(sortOption) // TravelStory.find(queryOption).sort(sortOption)
     res.status(200).json({ stories })
   } catch (error) {
     res.status(500).json({ error: true, message: error.message })

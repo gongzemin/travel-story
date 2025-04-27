@@ -160,10 +160,12 @@ const Home: React.FC = () => {
   }
 
   // Get all travel stories
-  const getAllTravelStories = async () => {
+  const getAllTravelStories = async (params = {}) => {
     setIsLoading(true)
     try {
-      const response = await axiosInstance.get('/mine/get-all-stories')
+      const response = await axiosInstance.get('/public/get-tag-stories', {
+        params,
+      })
       if (response.data && response.data.stories) {
         setAllStories(response.data.stories)
       }
@@ -243,9 +245,12 @@ const Home: React.FC = () => {
   }
 
   const handleSelectCategory = (category: string) => {
-    setSelectedCategory(prev => (prev === category ? '' : category))
+    setSelectedCategory(prev => {
+      const newCategory = prev === category ? '' : category
+      getAllTravelStories({ filterType: newCategory, tag: newCategory }) // 👉 带上tag去请求
+      return newCategory
+    })
   }
-
   useEffect(() => {
     const fetchData = async () => {
       await getUserInfo()
