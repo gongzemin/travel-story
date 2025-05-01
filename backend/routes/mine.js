@@ -15,26 +15,6 @@ cloudinary.config({
 
 const router = express.Router()
 
-// Get user
-router.get('/get-user', authenticateToken, async (req, res) => {
-  const { userId } = req.user
-  const isUser = await User.findOne({ _id: userId })
-  if (!isUser) {
-    return res.sendStatus(401)
-  }
-  return res.json({
-    user: isUser,
-    message: '',
-  })
-
-  // const user = await User.findById(req.user.userId)
-  // return res.status(200).json({
-  //   error: false,
-  //   user: { fullName: user.fullName, email: user.email },
-  //   message: 'User found',
-  // })
-})
-
 // Add Travel Story
 router.post('/add-travel-story', authenticateToken, async (req, res) => {
   // Validate required fields

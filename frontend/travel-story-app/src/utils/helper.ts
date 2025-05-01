@@ -5,7 +5,7 @@ export const validateEmail = (email: string): boolean => {
 // 获取 名字的首字母缩写（最多两个字母） 适用于头像缩写、用户名标识等场景
 // getInitials("John Doe")          // "JD"
 export const getInitials = (name: string): string => {
-  if (!name) return ''
+  if (!name) return '未登录'
   const words = name.split(' ')
   let initials = ''
   for (let i = 0; i < Math.min(words.length, 2); i++) {

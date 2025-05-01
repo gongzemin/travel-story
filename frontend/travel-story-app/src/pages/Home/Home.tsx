@@ -22,7 +22,7 @@ import { zhCN } from 'react-day-picker/locale'
 import moment from 'moment'
 
 interface UserInfo {
-  username: string
+  fullName: string
   password: string
 }
 
@@ -44,7 +44,7 @@ const Home: React.FC = () => {
 
   const [allStories, setAllStories] = useState<TravelStory[]>([])
   const [userInfo, setUserInfo] = useState<UserInfo>({
-    username: '',
+    fullName: '',
     password: '',
   })
 
@@ -87,15 +87,22 @@ const Home: React.FC = () => {
   // Get User Info
   const getUserInfo = async () => {
     try {
-      const response = await axiosInstance.get('/mine/get-user')
-      if (response.data && response.data.user) {
+      const response = await axiosInstance.get('/public/get-user')
+
+      if (response.data?.user) {
+        // User is logged in
         setUserInfo(response.data.user)
-      }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
+      } else {
+        // User is not logged in
+        setUserInfo({
+          fullName: '未登录',
+          password: '',
+        })
         localStorage.clear()
-        navigate('/login')
       }
+    } catch (error: unknown) {
+      console.error('获取用户信息时发生错误:', error)
+      // Optional: handle unexpected errors (network, server crash, etc.)
     }
   }
 
