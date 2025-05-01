@@ -17,7 +17,7 @@ router.get('/get-user', async (req, res) => {
 
   return res.status(200).json({
     user,
-    message: ' 用户信息获取成功',
+    message: '用户信息获取成功',
   })
   // const { userId } = req.user
   // const isUser = await User.findOne({ _id: userId })
