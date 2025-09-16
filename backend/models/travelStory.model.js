@@ -13,5 +13,6 @@ const travelStorySchema = new Schema({
   tags: { type: [String], default: [] },
   favouriteCount: { type: Number, default: 0 }, // 新增 收藏数量
 })
-
-module.exports = mongoose.model('TravelStory', travelStorySchema)
+// 3️⃣ 切换到 book 数据库
+const bookDB = mongoose.connection.useDb('book')
+module.exports = bookDB.model('Reading_Notes', travelStorySchema)

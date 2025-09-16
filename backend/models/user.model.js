@@ -8,4 +8,7 @@ const userSchema = new Schema({
   createdOn: { type: Date, default: Date.now },
 })
 
-module.exports = mongoose.model('User', userSchema)
+// 3️⃣ 切换到 book 数据库
+const bookDB = mongoose.connection.useDb('book')
+
+module.exports = bookDB.model('User', userSchema)
