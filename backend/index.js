@@ -9,7 +9,19 @@ const config = require('./config.json')
 const Sentry = require('@sentry/node')
 const path = require('path')
 
-mongoose.connect(config.connectionString)
+// mongoose.connect(config.connectionString)
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(config.connectionString)
+    console.log('MongoDB连接成功')
+  } catch (err) {
+    console.error('MongoDB连接失败:', err)
+    process.exit(1)
+  }
+}
+
+connectDB()
 
 const app = express()
 app.use(express.json())
